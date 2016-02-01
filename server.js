@@ -10,7 +10,7 @@ var User = require('./models/user')
 
 var app = express();
 
-mongoose.connect('mongodb://admin:password@ds051575.mongolab.com:51575/ecommerce', function(err) {
+mongoose.connect(process.env.MONGOLAB_URI, function(err) {
 	if (err) {
 		console.log(err);
 	} else {
