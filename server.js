@@ -5,12 +5,16 @@ var bcrypt = require('bcrypt-nodejs');
 var bodyParser = require('body-parser');
 var ejs = require('ejs');
 var ejsMate = require('ejs-mate');
+var session = require('express-session');
+var cookieParser = require('cookie-parser');
+var flash = require('express-flash');
 
+var secret = require('./config/secret');
 var User = require('./models/user')
 
 var app = express();
 
-mongoose.connect(process.env.MONGOLAB_URI, function(err) {
+mongoose.connect(secret.database, function(err) {
 	if (err) {
 		console.log(err);
 	} else {
@@ -18,31 +22,30 @@ mongoose.connect(process.env.MONGOLAB_URI, function(err) {
 	}
 })
 
-PORT = 3000;
 
 //Middleware
+app.use(express.static(__dirname + '/public'));
 app.use(morgan('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({
+	extended: true
+}));
 app.engine('ejs', ejsMate);
 app.set('view engine', 'ejs');
+app.use(cookieParser());
+app.use(session({
+	resave: true,
+	saveUninitialized: true,
+	secret: secret.secretKey
+}));
+app.use(flash());
 
-app.post('/create-user', function(req, res, next){
-	var user = new User();
+var mainRoutes = require('./routes/main');
+var userRoutes = require('./routes/user');
+app.use(mainRoutes);
+app.use(userRoutes);
 
-	user.profile.name = req.body.name;
-	user.password = req.body.password;
-	user.email = req.body.email;
-
-	user.save(function(err) {
-		if(err) return next(err);
-
-		res.json('Sucessfully created a new user');
-	});
-});
-
-
-app.listen(PORT, function(err) {
-	if(err) throw err; 
-	console.log('Server is running on port '+PORT);
+app.listen(secret.port, function(err) {
+	if (err) throw err;
+	console.log('Server is running on port ' + secret.port);
 });
