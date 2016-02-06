@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -12,14 +11,10 @@
 
   <body>
 		<% include ./partials/navbar %>
-    <div class="container">
+    
     <%- body -%>
 
-    
-    </div> <!-- /container -->
-
-	<% include ./partials/footer %>
-   <script src="/js/jquery.min.js"></script>
-   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	  <% include ./partials/footer %>
+    <% include ./partials/jsonly %> 
   </body>
 </html>
