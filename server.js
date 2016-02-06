@@ -44,9 +44,14 @@ app.use(session({
 		autoReconnect: true
 	})
 }));
+
 app.use(flash());
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(function(req, res, next) {
+	res.locals.user = req.user;
+	next();
+});
 
 var mainRoutes = require('./routes/main');
 var userRoutes = require('./routes/user');
